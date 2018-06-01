@@ -205,10 +205,6 @@
         acc = collection[0];
         x = 1;
       }
-      else
-      {
-        acc = accumulator;
-      }
       
       for (x; x < collection.length; x++)
       { 
@@ -223,6 +219,15 @@
   _.contains = function(collection, target) {
     // TIP: Many iteration problems can be most easily expressed in
     // terms of reduce(). Here's a freebie to demonstrate!
+    if (!Array.isArray(collection)){
+      for (var key in collection){
+        if (collection[key] === target)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
     return _.reduce(collection, function(wasFound, item) {
       if (wasFound) {
         return true;
@@ -235,13 +240,56 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    var acc = true;
+    if (collection.length === 0)
+    {
+      return acc;
+    }
+
+    for (var x = 0; x < collection.length; x++)
+    {
+      if (iterator === undefined)
+      {
+        if(Boolean(collection[x]) === false)
+        {
+          acc = false;
+        }
+      }
+      else if (Boolean(iterator(collection[x])) === false)
+      {
+        acc = false;
+      }
+    }
+    return acc;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    var acc = false;
+    if (collection.length === 0)
+    {
+      return acc;
+    }
+
+    for (var x = 0; x < collection.length; x++)
+    {
+      if (iterator === undefined) //check if iterator is undefined
+      {
+        if(Boolean(collection[x]) === true)
+        {
+          acc = true;
+        }
+      }
+      else if (Boolean(iterator(collection[x])) === true) //if any value is true, set acc to true
+      {
+        acc = true;
+      }
+    }
+    return acc;
   };
+ 
 
 
   /**
@@ -262,13 +310,34 @@
   //   }, {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
-  _.extend = function(obj) {
+  _.extend = function(obj0, obj1, obj2) {
+     for (var key in obj1)
+     {
+      obj0[key] = obj1[key];
+     }
+     for (var key in obj2)
+     {
+      obj0[key] = obj2[key];
+     }
+     return obj0;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
-  _.defaults = function(obj) {
+  _.defaults = function(obj0, obj1, obj2, obj3) {
+    for (var x = 1; x < 4; x++)
+    {
+      for (var key in obj[x])
+      {
+        if(obj0[key] === undefined)
+        {
+          obj0[key] = obj[x][key];
+        }
+      }
+    }
+    return obj0;
   };
+  
 
 
   /**
