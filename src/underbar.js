@@ -310,33 +310,36 @@
   //   }, {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
-  _.extend = function(obj0, obj1, obj2) {
-     for (var key in obj1)
-     {
-      obj0[key] = obj1[key];
-     }
-     for (var key in obj2)
-     {
-      obj0[key] = obj2[key];
-     }
-     return obj0;
-  };
-
-  // Like extend, but doesn't ever overwrite a key that already
-  // exists in obj
-  _.defaults = function(obj0, obj1, obj2, obj3) {
-    for (var x = 1; x < 4; x++)
+  _.extend = function(obj) {
+    var obj0 = arguments[0];
+    for (var x in arguments)
     {
-      for (var key in obj[x])
+      var objNext = arguments[x];
+      for(var key in objNext)
       {
-        if(obj0[key] === undefined)
-        {
-          obj0[key] = obj[x][key];
-        }
+        obj0[key] = objNext[key];
       }
     }
     return obj0;
   };
+
+  // Like extend, but doesn't ever overwrite a key that already
+  // exists in obj
+  _.defaults = function(obj) {
+  var obj0 = arguments[0];
+  for (var x in arguments)
+  {
+    var objNext = arguments[x];
+    for (var key in objNext)
+    {
+      if(obj0[key] === undefined)
+      {
+        obj0[key] = objNext[key];
+      }
+    }
+  }
+  return obj0;
+};
   
 
 
@@ -380,6 +383,27 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+     var alreadyCalled = false;
+    var result;
+    var params;
+
+    return function(){
+      console.log(JSON.stringify(params))
+      
+      if(!alreadyCalled)
+      {
+        result = func.apply(this, arguments);
+        console.log("alreadyCalled")
+        alreadyCalled = true;
+        params = arguments;
+      }
+      else if(JSON.stringify(params) !== JSON.stringify(arguments))
+      {
+        result = func.apply(this, arguments);  
+      }
+      return result;
+    }
+
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -388,7 +412,8 @@
   // The arguments for the original function are passed after the wait
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
-  _.delay = function(func, wait) {
+  _.delay = function(func, wait, arg1, arg2) {
+    return setTimeout(func, wait, arg1, arg2); 
   };
 
 
@@ -403,7 +428,21 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
-  };
+    var newArr = array.slice();
+    var randomArr = [];
+   
+    for(var x = 0; x < newArr.length; x++)
+    {
+      var randomIndex = Math.floor(Math.random()*newArr.length); 
+      while(randomArr.includes(newArr[randomIndex])) //get unique random index
+      {
+        randomIndex = Math.floor(Math.random()*newArr.length);
+      }
+      randomArr.push(newArr[randomIndex])
+    }
+    return randomArr;
+
+  }
 
 
   /**
